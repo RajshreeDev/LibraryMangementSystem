@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewBag.Title = "IssueBook";
+}
+
+@Scripts.Render("~/Scripts/jquery-3.4.1.js")
+<script>
+    $(document).ready(function () {
+        
+        $("#btn_IssueBook").click(function () {
+            var flag = 0;
+            var jsonObj = [];
+            var issuedTo = $("#issuedto").val();
+            var issuePeriod = $("#issue_period").val();
+            var issueDate = $("#issue_date").val();
+            if (issuedTo && issueDate && issuePeriod) {
+                if (issuePeriod > 30) {
+                    flag = 1;
+                    alert("Cannot issue book longer than 1 month!!!");
+                }else {
+                    var MyRows = $('#book_tbl').find('tbody').find('tr');
+                    if (MyRows.length > 0) {
+                        if (MyRows.length <= 5) {
+                            for (var i = 0; i < MyRows.length; i++) {
+                                flag = 0;
+                                var bookid = MyRows[i].cells[0].innerText;
+                                item = {};
+                                item["BookId"] = bookid;
+                                item["IssuedTo"] = issuedTo;
+                                item["Period"] = issuePeriod;
+                                item["IssuedDate"] = issueDate;
+                                jsonObj.push(item);
+                              
+
+                            }
+                            if (flag == 0) {
+                                $.ajax
+                                    ({
+                                        url: '/Books/IssueBookToUser',
+                                        type: 'POST',
+                                        datatype: 'application/json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(jsonObj),
+                                        success: function (result) {
+                                            alert("Books issued successfully.\n Issue #" + result);
+                                            window.location.reload();
+                                        },
+                                        error: function (xhr, status, error) {
+                                            //alert(error);
+                                            //alert(xhr.responseText);
+                                            //alert(status);
+                                            alert("Whooaaa! Something went wrong..")
+                                        }
+                                    })
+                            }
+                          
+                        }
+                        else {
+                            flag = 1;
+                            alert("Cannot issue more than 5 books at a time");
+                        }
+                    }
+                    else {
+                        flag = 1;
+                        alert("Please add atleast 1 book to issue");
+                    }
+                }
+            }
+            else {
+                alert("Please fill the fields");
+            }
+           
+        });
+        $("#searchbtn").click(function () {
+            var bookid = $("#bookid").val();
+            if (bookid.length > 0) {
+                $.ajax
+                    ({
+                        url: '/Books/SearchBook',
+                        type: 'POST',
+                        datatype: 'application/json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            bookid: bookid
+                        }),
+                        success: function (result) {
+
+                            var data = jQuery.parseJSON(result);
+                            if (result == "null") {
+                                alert("Book Id not found");
+                                $("#search").val("");
+                            }
+                            else {
+                                var retVal = confirm("Book Id:" + data.Id + "\n" + "Title:" + data.Title + "\n" + "Author:" + data.Author);
+                                if (retVal == true) {
+                                    var markup = "<tr><td>" + data.Id + "</td><td>" + data.Title + "</td><td>" + data.Author+"</td></tr> ";
+                                    $("#book_tbl > tbody").append(markup);
+                                }
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            $("#divloading").hide();
+                            alert(status);
+                            alert(xhr.responseText);
+                            alert(err.Message);
+                        },
+                    });
+            }
+            else {
+                alert("Please enter Book # to search");
+            }
+        });
+    });
+</script>
+<h2>IssueBook</h2>
+<p>
+    @Html.ActionLink("Search Book", "Search")| @Html.ActionLink("Return Book", "ReturnBook")
+</p>
+<br/>
+<div class="form-group">
+    <label class="control-label col-md-2">Search by Book #</label>
+    <div class="col-md-10">
+        <input type="text" placeholder="Book Id" id="bookid" class="form-control col-md-2" />
+        <input style="margin-left:10px" type="button" value="Search" id="searchbtn" class="btn btn-primary" />
+        <input style="margin-left:10px" type="button" onclick="window.location.reload();" value="Refresh" id="refresh" class="btn btn-primary" />
+    </div>
+</div>
+<br />
+<br />
+<br />
+
+<div class="row">
+    <div class="col-md-2">
+        <label>Issued To*</label>
+        <input type="text" class="form-control" id="issuedto" required/>
+    </div>
+    <div class="col-md-2">
+        <label>Issue Period*</label>
+        <input type="number" class="form-control" id="issue_period" required />
+    </div>
+    <div class="col-md-2">
+        <label>Issue Date*</label>
+        <input type="date" class="form-control" id="issue_date" required/>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<table id="book_tbl" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <td>Book Id</td>
+            <td>Title</td>
+            <td>Author</td>
+        </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+
+<button class="btn btn-primary" id="btn_IssueBook">Issue Book</button>

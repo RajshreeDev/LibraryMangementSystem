@@ -1,0 +1,64 @@
+﻿
+@{
+    ViewBag.Title = "IssueBook";
+}
+
+@Scripts.Render("~/Scripts/jquery-3.4.1.js")
+<script>
+    $(document).ready(function () {
+
+
+        $("#btn_ReturnBook").click(function () {
+            var bookid = $("#book_id").val();
+            var iId = $("#issuedid").val();
+            if (bookid && issuedid) {
+                $.ajax
+                    ({
+                        url: '/Books/ReturnBookByUser',
+                        type: 'POST',
+                        datatype: 'application/json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            bookid: bookid,
+                            iId: iId
+                        }),
+                        success: function (result) {
+                            alert(result);
+                            location.reload(true);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(status);
+                            alert(xhr.responseText);
+                            alert(err.Message);
+                        },
+                    });
+            }
+            else {
+                alert("Please enter Book # & Issue Id to return book!!!");
+            }
+        });
+    });
+</script>
+<h2>Return Book</h2>
+
+<br />
+
+<p>
+    @Html.ActionLink("Search Book", "Search")| @Html.ActionLink("Issue Book", "IssueBook")
+</p>
+<br/>
+<div class="row">
+    <div class="col-md-2">
+        <label>Issue Id*</label>
+        <input type="number" class="form-control" id="issuedid" required />
+    </div>
+    <div class="col-md-2">
+        <label>Book Id*</label>
+        <input type="number" class="form-control" id="book_id" required />
+    </div>
+</div>
+<br />
+<br />
+
+
+<button class="btn btn-primary" id="btn_ReturnBook">Return Book</button>

@@ -1,0 +1,27 @@
+﻿
+@{ ViewBag.Title = "Home Page"; }
+
+
+
+<br />
+<br />
+<center>
+    <div class="row">
+
+        <div class="col-md-2">
+            <input type="button" class="btn btn-primary" value="Search Book" onclick="location.href='@Url.Action("Search", "Books")'" />
+        </div>
+        <div class="col-md-2">
+            <input type="button" class="btn btn-primary" value="Issue Book" onclick="location.href='@Url.Action("IssueBook", "Books")'" />
+        </div>
+
+        <div class="col-md-2">
+            <input type="button" class="btn btn-primary" value="Return Book" onclick="location.href='@Url.Action("ReturnBook", "Books")'" />
+        </div>
+
+    </div>
+</center>
+
+
+
+

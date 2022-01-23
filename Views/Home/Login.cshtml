@@ -1,0 +1,51 @@
+﻿@model LibraryManagement.Models.Member
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Login Form Example</title>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Rubik:400,700'>
+
+
+
+
+    <link href="~/Content/style.css" rel="stylesheet" />
+
+</head>
+<body>
+
+ 
+    @using (Html.BeginForm("Login", "Home"))
+    {
+        @Html.AntiForgeryToken()
+
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(m => m.Username, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" id="btnAdmin" name="command" value="adminlogin">Login as Admin</button>
+            </div>
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" id="btnMember" name="command" value="memberlogin">Login as Member</button>
+            </div>
+        </div>
+    }
+
+    <script src="~/Scripts/script.js"></script>
+
+</body>
+</html>
